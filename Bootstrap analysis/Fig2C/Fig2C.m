@@ -1,4 +1,5 @@
-% Fig2C: run this file from MATLAB.
+% Fig2C and Extended Data Fig. 3a: run this file from MATLAB.
+% The binary branch generates Fig2C; the intensity branch supports Extended Data Fig. 3a.
 % Original analysis: Bootstrap/fig 2c/fig2c_flypaired_bagged_MET.m; fig2c_intensity_sixpanel_analysis.m
 % MATLAB R2023a; Statistics and Machine Learning Toolbox.
 % All paths are relative to this file; input files are read only.
@@ -49,7 +50,7 @@ cfgKDE.diagnosticBinWidth = 0.5;
 
 cfgIntensity = struct();
 cfgIntensity.outputDir = fullfile(figureDir, 'results');
-cfgIntensity.outputStem = "Fig2C_Intensity";
+cfgIntensity.outputStem = "ExtendedDataFig3A_Intensity";
 cfgIntensity.showFigures = true;
 % Analysis settings: these affect the estimator or statistical inference.
 cfgIntensity.nInner = 1000;

@@ -6,7 +6,7 @@ wtFile = cfg.wtFile;
 
 if ~isfile(perFile) || ~isfile(wtFile)
     error("ClockAnalysis:MissingInput", ...
-        "Expected per0_long.xlsx and Fig2F LD3DD1_long.xlsx beside this script.");
+        "Cannot find the configured per0/control input workbooks: %s; %s", perFile, wtFile);
 end
 if ~isfolder(cfg.outputDir)
     mkdir(cfg.outputDir);
