@@ -1,4 +1,6 @@
-# A phase gap between transcription peaks of clock neurons encodes seasonal time
+# A transcription-peak phase gap between clock neurons encodes seasonal time
+
+This is the self-contained Nature version, using the manuscript's main-figure and 11 Extended Data figure numbers. Run the commands below with this `Nature/` directory as the repository root. Main-figure entries use names such as `Fig2C`; Extended Data entries use names such as `ExtendedDataFig3C`.
 
 Analysis code accompanying the study, covering bootstrap statistics, kernel-based activity traces, lipid-droplet quantification, RNAscope quantification, and live-imaging cell tracking and MS2 signal processing.
 
@@ -17,7 +19,7 @@ The MATLAB figure analyses include their input spreadsheets. The image-analysis 
 
 Each module keeps its shared functions in its own `script/` directory, except `Cell_tracking`, which provides replacement files for an upstream package. Keep these directory structures when moving the repository. Folder and script names follow the current manuscript figure numbering.
 
-In the M/E analyses, **M** denotes sLNv cells and **E** denotes the 5th LN. Fig1H analyzes lLNv cells. Time units are specified in the input headers and configuration; recording timestamps are generally stored in hours, while kernel windows are configured in minutes.
+In the M/E analyses, **M** denotes sLNv cells and **E** denotes the 5th sLNv. Fig1H analyzes lLNv cells. Time units are specified in the input headers and configuration; recording timestamps are generally stored in hours, while kernel windows are configured in minutes.
 
 ## Software requirements
 
@@ -73,7 +75,7 @@ The entry script locates its input files and adds the module's shared `script/` 
 
 | Entry script | Analysis |
 | --- | --- |
-| [Fig2C](Bootstrap%20analysis/Fig2C/Fig2C.m) | Fly-paired KDE and continuous-intensity analyses |
+| [Fig2C](Bootstrap%20analysis/Fig2C/Fig2C.m) | Fig. 2c binary KDE; Extended Data Fig. 3a burst amplitude, AUC and AUC peak bootstrap |
 | [Fig2F](Bootstrap%20analysis/Fig2F/Fig2F.m) | Paired M/E peak-time and phase-gap bootstrap |
 | [Fig2H](Bootstrap%20analysis/Fig2H/Fig2H.m) | Paired M/E peak-time and phase-gap bootstrap |
 | [Fig5B](Bootstrap%20analysis/Fig5B/Fig5B.m) | Paired M/E peak-time and phase-gap bootstrap |
@@ -81,18 +83,20 @@ The entry script locates its input files and adds the module's shared `script/` 
 | [Fig5DE](Bootstrap%20analysis/Fig5DE/Fig5DE.m) | M- and E-cell peak shifts relative to the control |
 | [Fig5F](Bootstrap%20analysis/Fig5F/Fig5F.m) | Paired M/E peak-time and phase-gap bootstrap |
 | [Fig5H](Bootstrap%20analysis/Fig5H/Fig5H.m) | Both dbtS and dbtL phase-gap contrasts against their respective controls |
-| [figS5C](Bootstrap%20analysis/figS5C/figS5C.m) | Paired M/E peak-time and phase-gap bootstrap |
-| [figS5E](Bootstrap%20analysis/figS5E/figS5E.m) | Periodic-spline rhythmicity, amplitude and equivalence analyses |
-| [figS6C](Bootstrap%20analysis/figS6C/figS6C.m) | Whole-cell and nuclear measurements, run separately |
-| [figS7C](Bootstrap%20analysis/figS7C/figS7C.m) | Paired M/E peak-time and phase-gap bootstrap |
-| [figS8A](Bootstrap%20analysis/figS8A/figS8A.m) | Peak shifts for three experimental groups relative to the control |
-| [figS10](Bootstrap%20analysis/figS10/figS10.m) | Paired analyses across the configured photoperiod datasets |
-| [figS11B](Bootstrap%20analysis/figS11B/figS11B.m) | Paired M/E peak-time and phase-gap bootstrap |
-| [figS13CFI](Bootstrap%20analysis/figS13CFI/figS13CFI.m) | Separate analyses for supplementary panels C, F and I |
+| [ExtendedDataFig3C](Bootstrap%20analysis/ExtendedDataFig3C/ExtendedDataFig3C.m) | Extended Data Fig. 3c: control fixed-brain TICK peak times and phase gap |
+| [ExtendedDataFig3E](Bootstrap%20analysis/ExtendedDataFig3E/ExtendedDataFig3E.m) | Extended Data Fig. 3e: control/per0 rhythmicity, amplitude and equivalence |
+| [ExtendedDataFig4BC](Bootstrap%20analysis/ExtendedDataFig4BC/ExtendedDataFig4BC.m) | Extended Data Fig. 4b/c: nuclear and whole-cell TIM, analyzed separately |
+| [ExtendedDataFig4G](Bootstrap%20analysis/ExtendedDataFig4G/ExtendedDataFig4G.m) | Extended Data Fig. 4g: Pdp1 peak times and phase gap |
+| [ExtendedDataFig5A](Bootstrap%20analysis/ExtendedDataFig5A/ExtendedDataFig5A.m) | Extended Data Fig. 5a: peak shifts for LP15, LP18 and LP21 relative to the control |
+| [ExtendedDataFig7](Bootstrap%20analysis/ExtendedDataFig7/ExtendedDataFig7.m) | Extended Data Fig. 7a-d: paired analyses across the configured photoperiod datasets |
+| [ExtendedDataFig8B](Bootstrap%20analysis/ExtendedDataFig8B/ExtendedDataFig8B.m) | Extended Data Fig. 8b: DD4 peak times and phase gap |
+| [ExtendedDataFig8FIL](Bootstrap%20analysis/ExtendedDataFig8FIL/ExtendedDataFig8FIL.m) | Extended Data Fig. 8f/i/l: 10L:14D, 12L:12D and 14L:10D peak-time analyses |
 
 ### Inputs and settings
 
 Most figure folders contain `data.xlsx`. The input blocks are selected by sheet index and, where needed, explicit cell ranges in the entry script. Preserve tab order, column positions and paired M/E rows. For these index-based readers, changing a tab's display name does not change the selected data.
+
+For `ExtendedDataFig4BC`, sheet 1 is whole-cell TIM (panel c) and sheet 2 is nuclear TIM (panel b). Output stems are `ExtendedDataFig4C_wholecell` and `ExtendedDataFig4B_nuclear`; result fields remain `wholecell` and `nuclear`. For `ExtendedDataFig8FIL`, sheets 1, 2 and 3 correspond to panels f, i and l (10L:14D, 12L:12D and 14L:10D); the returned fields are `results.F`, `results.I` and `results.L`.
 
 **Fig2C uses two workbooks**:
 
@@ -107,7 +111,7 @@ Contrast signs are explicit in the entry scripts and outputs. The standard singl
 
 ### Outputs
 
-Outputs are written to the figure's `results/` folder. Depending on the analysis, they include XLSX summary and diagnostic tables, MAT results with effective settings, and SVG plots. Fig2C saves its KDE and intensity branches under separate output stems. Change the configured output directory to retain separate repeated runs. Figure visibility is controlled by `showFigures` in the relevant configuration block.
+Outputs are written to the figure's `results/` folder. Depending on the analysis, they include XLSX summary and diagnostic tables, MAT results with effective settings, and SVG plots. Fig2C saves its binary KDE branch as `Fig2C_KDE*` and its Extended Data Fig. 3a intensity branch as `ExtendedDataFig3A_Intensity*`, both under `Fig2C/results/`. The intensity exports include the combined six-panel analysis, standalone AUC peak-time (`*_panelA_bagged_peak.svg`) and active-amplitude (`*_panelC_active_amplitude.svg`) plots, numerical summaries and diagnostics. Here `panelA` and `panelC` are internal output labels within that analysis. Change the configured output directory to retain separate repeated runs. Figure visibility is controlled by `showFigures` in the relevant configuration block.
 
 ## KDE analysis
 
@@ -138,7 +142,7 @@ Results are written to each figure's `results/` folder: numerical tables, MAT re
 
 ## Lipid-droplet quantification
 
-Open [Lipid_droplet_workflow.ipynb](Lipid%20droplet%20analysis/Lipid_droplet_workflow.ipynb) in the Python 3.11 environment.
+This workflow supports Fig. 5k and Extended Data Fig. 11c. Open [Lipid_droplet_workflow.ipynb](Lipid%20droplet%20analysis/Lipid_droplet_workflow.ipynb) in the Python 3.11 environment.
 
 ### Configure the inputs
 
@@ -160,7 +164,7 @@ Quantification creates new folders under `results/batches/`; reports go under `r
 
 ## RNAscope quantification
 
-This module includes **LD4 single-channel** and **LP dual-channel** analyses. Open [RNAscope_quantification_usage.ipynb](RNAscope%20analysis/RNAscope_quantification_usage.ipynb), choose `EXPERIMENT = 'LD4'` or `'LP_dual'`, and set `DATA_ROOT`.
+This module includes **LD4 single-channel** (Fig. 2g/h, with quantification in h) and **LP dual-channel** (Extended Data Fig. 5d) analyses. Open [RNAscope_quantification_usage.ipynb](RNAscope%20analysis/RNAscope_quantification_usage.ipynb), choose `EXPERIMENT = 'LD4'` or `'LP_dual'`, and set `DATA_ROOT`.
 
 ### Configure datasets and masks
 
@@ -304,6 +308,26 @@ Execute each command separately and complete the manual steps before continuing:
 Baseline correction uses robust LOESS with span 0.2; `smooth_span` controls display smoothing separately. If omitting the five-method branch, set `plotOptimized = false` during configuration and skip `optimize` and `ppt`.
 
 Outputs remain in the recording directory, including `Cell_ID.mat`, `tracked_signal/`, `CellMaxIP/`, five-method outputs, and `SignalFigs/` containing figures and numerical MAT exports. Use `status` to inspect saved configuration and completed stages. To restart an analysis, use a fresh recording directory containing copies of the prepared inputs.
+
+## Extended Data figure numbering
+
+The supplementary analyses use the following correspondence to the previous 16-figure layout. Related analyses retain separate entry folders when they use different methods or inputs.
+
+| Previous supplementary figure | Nature Extended Data figure | Panel correspondence |
+| --- | --- | --- |
+| S1 | 1 | a-i retained |
+| S2, S3, S4 | 2 | S2 to a; S4 to b; S3a-e to c-g |
+| S5 | 3 | a-e retained; panel a is generated by `Bootstrap analysis/Fig2C/Fig2C.m` |
+| S6, S7 | 4 | S6a to a; nuclear TIM to b; whole-cell TIM to c; S7a-d to d-g |
+| S8 | 5 | a-e retained |
+| S9 | 6 | a-e retained |
+| S10 | 7 | a-d retained |
+| S11, S12, S13 | 8 | S11a/b to a/b; S12 to c; S13a-i to d-l |
+| S14 | 9 | a-d retained |
+| S15 | 10 | a-d retained |
+| S16 | 11 | a-f retained |
+
+`ExtendedDataFig4G` runs the Pdp1 analysis previously stored in `figS7C`; its content corresponds to the former S7d panel. Only analyses present in this code bundle have entry folders.
 
 ## Data and reproducibility
 

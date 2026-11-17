@@ -1,6 +1,6 @@
 # Cell tracking
 
-This folder packages the laboratory's **Win10, U-Net-based single-mode workflow** for segmenting and tracking cells in live 3D time-lapse recordings. It follows the locally used `Examples/use_unet/single_mode_worm1-clear.ipynb` and supplies the files needed to reconstruct its customized 3DeeCellTracker installation.
+This folder packages the laboratory's **U-Net-based single-mode workflow** for segmenting and tracking cells in live 3D time-lapse recordings. It follows the locally used `Examples/use_unet/single_mode_worm1-clear.ipynb` and supplies the files needed to reconstruct its customized 3DeeCellTracker installation.
 
 The workflow is: initial segmentation of the first 3D volume, manual correction of that volume, U-Net fine-tuning using the corrected labels, then FFN + PR-GLS tracking of subsequent volumes. Each recording needs its own images and first-volume labels.
 
@@ -23,13 +23,13 @@ Cell_tracking/
     ffn_k3.hdf5
 ```
 
-The replacement files are unchanged copies of the locally used Win10 sources. The notebook has been reorganized around one recording configuration, with saved outputs cleared. It checks the installed replacement files and bundled models using SHA-256 checksums before starting the analysis.
+The replacement files are unchanged copies of the locally used sources. The notebook has been reorganized around one recording configuration, with saved outputs cleared. It checks the installed replacement files and bundled models using SHA-256 checksums before starting the analysis.
 
 ## 1. Prepare the environment
 
-Use the **working Win10 tracking Conda environment** used for the original analysis. The source notebook records Python **3.8.19**. A complete export of that machine's TensorFlow/Keras/CUDA environment was not supplied, so this folder does not provide a verified fresh-machine environment lock. The Win11 environment is not used as the reference environment here.
+Use the **working tracking Conda environment** used for the original analysis. The source notebook records Python **3.8.19**. A complete export of that machine's TensorFlow/Keras/CUDA environment was not supplied, so this folder does not provide a verified fresh-machine environment lock. 
 
-The upstream prerequisites are TensorFlow 2.x, its compatible CUDA/cuDNN installation for GPU use, and the scientific Python/Jupyter dependencies of 3DeeCellTracker. For a new installation, consult the [README at the pinned upstream commit](https://github.com/WenChentao/3DeeCellTracker/blob/6819c761d586a1f66cd5615bcfd7fa9bcf5992f8/README.md). Keep the already working environment when reconstructing an existing analysis. The upstream `requirements.txt` is not a verified lock for the historical Win10 machine.
+The upstream prerequisites are TensorFlow 2.x, its compatible CUDA/cuDNN installation for GPU use, and the scientific Python/Jupyter dependencies of 3DeeCellTracker. For a new installation, consult the [README at the pinned upstream commit](https://github.com/WenChentao/3DeeCellTracker/blob/6819c761d586a1f66cd5615bcfd7fa9bcf5992f8/README.md). Keep the already working environment when reconstructing an existing analysis. The upstream `requirements.txt` is not a verified lock for the historical machine.
 
 Use **classic Jupyter Notebook** for the original `%matplotlib notebook` interactive tracking display. Activate the intended environment in an Anaconda PowerShell Prompt before following the installation commands below. Do not run these commands from a different Python environment.
 
@@ -43,12 +43,12 @@ The reference is [WenChentao/3DeeCellTracker](https://github.com/WenChentao/3Dee
 
 Use this commit rather than the current default branch. The replacement files were compared against this exact snapshot. Keep the source checkout separate from this publication folder.
 
-From the activated Win10 environment, run the following in PowerShell, changing the first path to this folder's location:
+From the activated environment, run the following in PowerShell, changing the first path to this folder's location:
 
 ```powershell
 Set-Location 'C:\path\to\Cell_tracking'
 $bundleDir = (Get-Location).Path
-$trackerSource = Join-Path $env:USERPROFILE 'source\3DeeCellTracker_win10'
+$trackerSource = Join-Path $env:USERPROFILE 'source\3DeeCellTracker'
 $upstreamCommit = '6819c761d586a1f66cd5615bcfd7fa9bcf5992f8'
 
 New-Item -ItemType Directory -Path (Split-Path -Parent $trackerSource) -Force | Out-Null
@@ -67,15 +67,15 @@ The clone destination must be a new directory. `--no-deps` retains the dependenc
 Register the environment as a notebook kernel if needed:
 
 ```powershell
-python -m ipykernel install --user --name cell_tracking_win10 --display-name 'Cell tracking (Win10)'
+python -m ipykernel install --user --name cell_tracking --display-name 'Cell tracking'
 python -m notebook Cell_tracking.ipynb
 ```
 
-Select **Cell tracking (Win10)**. Restart the kernel after replacing source files. The notebook stops if Python imports a package whose four replacement files differ from the supplied copies.
+Select **Cell tracking**. Restart the kernel after replacing source files. The notebook stops if Python imports a package whose four replacement files differ from the supplied copies.
 
 ### Changes relative to the pinned upstream source
 
-| Replacement file | Preserved Win10 change | Role in this workflow |
+| Replacement file | Preserved change | Role in this workflow |
 |---|---|---|
 | `tracker.py` | FFN matching neighbor count changed from 20 to **3** | Active tracking path; use the supplied three-neighbor FFN |
 | `unet3d.py` | `unet3_a()` factory input changed from `(160,160,16,1)` to `(32,160,16,1)` | Historical factory change; this notebook loads the supplied serialized U-Net models, whose input shapes are listed below |
@@ -108,7 +108,7 @@ Edit section 1 of `Cell_tracking.ipynb`:
 - Set `VOLUME_NUM`, `Z_SLICES` and `IMAGE_NAME` for the supplied images.
 - Set `Z_XY_RATIO`, `Z_SCALING`, `NOISE_LEVEL`, `MIN_SIZE` and the tracking parameters for the recording.
 
-The default 256-mode settings follow the source Win10 notebook: 135 volumes, 46 Z slices, `z_xy_ratio=4.98`, `z_scaling=5`, noise level 20 and minimum region size 100. These are editable example parameters. Selecting the 128 profile changes XY size and U-Net selection; update the Z depth and all recording-specific settings as needed.
+The default 256-mode settings follow the source notebook: 135 volumes, 46 Z slices, `z_xy_ratio=4.98`, `z_scaling=5`, noise level 20 and minimum region size 100. These are editable example parameters. Selecting the 128 profile changes XY size and U-Net selection; update the Z depth and all recording-specific settings as needed.
 
 Run sections 1-3 to verify the patched package, select the models and create the project directories. Copy the images into the created `PROJECT_DIR/data` directory:
 
@@ -131,7 +131,7 @@ Each TIFF is one 2D slice. Time and Z numbering start at **1**. Match the filena
 2. Export the corrected label images into `PROJECT_DIR/manual_vol1`: one 2D label TIFF per Z slice, sorted in Z order by filename, such as `label_z001.tif`. Use **0 for background and a distinct positive integer for each cell**, preserving the same ID across Z slices. Export label values rather than RGB overlays. Keep only these label TIFFs in that directory.
 3. Run section 5 to validate and load the manual labels. Their dimensions must match the first imaging volume, and the reference must contain at least four cells.
 4. Run section 6 to fine-tune the selected initial U-Net on this recording's corrected first volume. The original routine uses 10 training steps and saves checkpoints only when validation loss improves.
-5. Review the predictions and available checkpoints. Set `SELECTED_UNET_STEP` in the **selection cell in section 6** and run that cell. The historical Win10 example selected step **9**, but that step may not be saved during a new training run. Choose a checkpoint actually produced for the current recording. Step 0 selects the initial weights.
+5. Review the predictions and available checkpoints. Set `SELECTED_UNET_STEP` in the **selection cell in section 6** and run that cell. The historical example selected step **9**, but that step may not be saved during a new training run. Choose a checkpoint actually produced for the current recording. Step 0 selects the initial weights.
 
 When changing `SELECTED_UNET_STEP`, rerun the selection cell directly; rerunning the configuration cell is unnecessary. To change the input recording or initial model profile, restart the kernel and use a fresh project directory.
 
@@ -143,7 +143,7 @@ Preserve the first-volume labels and **the final selected recording-specific wei
 
 ## 6. Test matching and track subsequent volumes
 
-Run section 7 to interpolate the manual labels, initialize tracking and load the three-neighbor FFN. The source Win10 tracking settings are `beta_tk=300`, `lambda_tk=0.2`, `maxiter_tk=500`. Inspect the match to `MATCH_VOLUME` (default 7), its correction display and overlapping regions.
+Run section 7 to interpolate the manual labels, initialize tracking and load the three-neighbor FFN. The source tracking settings are `beta_tk=300`, `lambda_tk=0.2`, `maxiter_tk=500`. Inspect the match to `MATCH_VOLUME` (default 7), its correction display and overlapping regions.
 
 Then run section 8 to track volumes 2 through `VOLUME_NUM`. Use classic Notebook for the interactive Matplotlib display. Review the replay animation and tracking outputs.
 
@@ -169,7 +169,7 @@ The distributed notebook has no saved execution output or image data. Raw imagin
 ## Provenance, citation and third-party license
 
 - Original method and implementation: [WenChentao/3DeeCellTracker](https://github.com/WenChentao/3DeeCellTracker), pinned as specified above.
-- Historical Luo-lab adaptation: [vislabwwy/3DCT_for_PKU_LDG](https://github.com/vislabwwy/3DCT_for_PKU_LDG). That public repository is based on version 0.4.5 and is credited as development history. The supplied replacement files reconstruct the later locally used Win10 version against the pinned 0.5.2-alpha source.
+- Historical Luo-lab adaptation: [vislabwwy/3DCT_for_PKU_LDG](https://github.com/vislabwwy/3DCT_for_PKU_LDG). That public repository is based on version 0.4.5 and is credited as development history. The supplied replacement files reconstruct the later locally used version against the pinned 0.5.2-alpha source.
 - The replacement sources retain the original author's notices. The upstream MIT license is preserved in `LICENSE_3DeeCellTracker`. The separately supplied model assets did not include a model-specific license statement; their redistribution and reuse terms should be recorded with their providers before external publication.
 
 Please cite:
@@ -180,6 +180,6 @@ This workflow uses the U-Net route. The upstream project also recommends citing 
 
 ## Validation of this public bundle
 
-The preparation checks verify that the four replacement files and three model files match their historical source files, that applying the replacements reconstructs the local Win10 package relative to the pinned upstream snapshot, and that the notebook is valid and its code cells compile. Model input shapes are checked from HDF5 metadata.
+The preparation checks verify that the four replacement files and three model files match their historical source files, that applying the replacements reconstructs the local package relative to the pinned upstream snapshot, and that the notebook is valid and its code cells compile. Model input shapes are checked from HDF5 metadata.
 
-These preparation checks do not constitute an end-to-end execution on the original Win10 imaging environment. Full GPU tracking and per-recording fine-tuning should be verified there with the matching image data and manual annotations.
+These preparation checks do not constitute an end-to-end execution on the original imaging environment. Full GPU tracking and per-recording fine-tuning should be verified there with the matching image data and manual annotations.
